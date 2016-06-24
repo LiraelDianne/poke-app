@@ -1,0 +1,56 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Pokes</title>
+    <meta name="description" content="Poke app main page for my python red belt/black belt at CodingDojo">
+    <meta name="author" content="Crystal Stellwagen">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <div class='nav'>
+       <p><a href="{% url 'logout' %}">Logout</a></p>
+    </div>
+    <div class='wrapper'>
+        <h1>Welcome, {{ user.alias }}!</h1>
+        {% if user.poked_set %}
+            <h3>{{ user.poked_set. }} people poked you!</h3>
+            <div>
+                {% for poker in pokers %}
+                    <p>{{poker.alias}} poked you so many times.</p>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h3>Nobody has poked you yet!</h3>
+        {% endif %}
+        <h3>People you may want to poke:</h3>
+        <table>
+            <thead>
+                <th>Name</th>
+                <th>Alias</th>
+                <th>Email</th>
+                <th>Poke History</th>
+                <th>Action</th>
+            </thead>
+            {% for person in users %}
+                {% if person != user %}
+                    <tr>
+                        <td>{{person.name}}</td>
+                        <td>{{person.alias}}</td>
+                        <td>{{person.email}}</td>
+                        <td>{{person.poked_set.count}}</td>
+                        <td>
+                            <form action="{% url 'poke' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name='poked' value="{{ person.id }}">
+                                <input type="submit" value="Poke!">
+                            </form>
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>
